@@ -1,20 +1,33 @@
-# DreamMMORPG — Godot Prototype
+# DreamMMORPG - Godot Prototype
 
-This folder is the engine-specific playable prototype. The Unity scaffold is intentionally preserved elsewhere in the repository.
+This folder contains the Android-first Godot prototype for DreamMMORPG.
 
-## Current foundation
-- Godot 4.x, GDScript (Android editor does not support C#).
-- Isometric-style camera starting point.
-- 3D player movement using keyboard actions.
-- Target dummy with health and basic damage interface.
-- Simple village-square blockout with an ancient-tree placeholder.
+## Open on an Android tablet
+1. Install Godot Editor for Android.
+2. Download the ZIP from the repository Releases page.
+3. Extract it on the tablet.
+4. In Godot, import the extracted folder that contains `project.godot`.
+5. Open and run the project. The project uses the Compatibility renderer for mobile support.
 
-## Next milestones
-1. Add touch-to-move and touch target selection.
-2. Implement Warlord skills: Cleave, Overhead Strike, Whirlwind, Charge, and equipment passive.
-3. Add class/stat/skill data as engine-neutral resources or JSON.
-4. Replace primitive blockout meshes with proper models, animation, lighting, and environment art.
-5. Design multiplayer authority and persistence separately before connecting a server.
+## Prototype controls
+- Tap the ground to move.
+- Tap the training dummy to select it.
+- Use the bottom action buttons to attack and use Warlord abilities.
+- Keyboard: WASD / arrow keys; Space for basic attack.
 
-## Tablet workflow
-The official Godot Android editor can open and edit projects on Android. It is experimental and has limitations; use GDScript and the Compatibility renderer. Keep this prototype lightweight for the Lenovo tablet.
+## Included
+- Greybox village square with central ancient tree.
+- Elevated isometric-style camera.
+- Player movement and touch ray selection.
+- Training dummy with health and respawn.
+- Warlord Cleave, Overhead Strike, Whirlwind and Charge prototype logic.
+- Mobile action bar.
+
+## Not yet included
+- Final realistic character/environment art, animation and effects.
+- Equipment, stats and passive implementation.
+- NPC dialogue, quests, inventory, progression and other classes.
+- Multiplayer networking and authoritative game server.
+- Android APK export.
+
+The GitHub Actions workflow validates/imports the project and publishes a source ZIP. It does not produce an APK.
