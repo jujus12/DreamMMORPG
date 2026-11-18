@@ -13,7 +13,7 @@ namespace DreamMMORPG.World
         [SerializeField] private int dummyCount = 4;
         [SerializeField] private int npcCount = 3;
 
-        private Material groundMat, stoneMat, woodMat, leafMat, clothMat, roofMat, skinMat, dummyMat;
+        private Material groundMat, stoneMat, pavingMat, woodMat, leafMat, clothMat, roofMat, skinMat, dummyMat;
 
         private void Start()
         {
@@ -37,6 +37,7 @@ namespace DreamMMORPG.World
         {
             groundMat = MakeMat(new Color(0.22f, 0.29f, 0.19f));
             stoneMat = MakeMat(new Color(0.38f, 0.39f, 0.37f));
+            pavingMat = MakeMat(new Color(0.42f, 0.42f, 0.40f));
             woodMat = MakeMat(new Color(0.22f, 0.12f, 0.07f));
             leafMat = MakeMat(new Color(0.12f, 0.28f, 0.13f));
             clothMat = MakeMat(new Color(0.36f, 0.25f, 0.16f));
@@ -77,9 +78,7 @@ namespace DreamMMORPG.World
                 for (int z = -7; z <= 7; z += 2)
                     Primitive(PrimitiveType.Cube, "Paving Stone",
                         new Vector3(x, 0.10f, z), new Vector3(1.85f, 0.08f, 1.85f),
-                        MakeMat(new Color(0.42f + Random.Range(-0.035f, 0.035f),
-                                          0.42f + Random.Range(-0.035f, 0.035f),
-                                          0.40f)), transform);
+                        pavingMat, transform);
         }
 
         private void BuildCentralTree()
