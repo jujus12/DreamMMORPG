@@ -1,0 +1,54 @@
+name: Godot Prototype Release
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "GodotPrototype/**"
+      - ".github/workflows/godot-prototype-release.yml"
+    branches: [main, master]
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.4.1
+          use-dotnet: false
+
+      - name: Validate project import
+        run: godot --headless --editor --path GodotPrototype --quit
+
+      - name: Package source project
+        run: |
+          mkdir -p release
+          zip -r release/DreamMMORPG-GodotPrototype.zip GodotPrototype \
+            -x "GodotPrototype/.godot/*" "*/.DS_Store"
+
+      - name: Upload source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: DreamMMORPG-GodotPrototype
+          path: release/DreamMMORPG-GodotPrototype.zip
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: godot-prototype-v0.1.${{ github.run_number }}
+          name: DreamMMORPG Godot Prototype v0.1.${{ github.run_number }}
+          body: |
+            Early playable-prototype source package.
+            Includes the Godot project, touch movement, target selection,
+            Warlord starter combat logic and mobile HUD.
+            This release is source-only; no Android APK is included.
+          files: release/DreamMMORPG-GodotPrototype.zip
