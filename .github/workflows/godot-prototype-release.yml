@@ -54,6 +54,17 @@ jobs:
           export/android/java_sdk_path = "$JAVA_HOME"
           EOF
 
+      - name: Create Android debug signing key
+        run: |
+          keytool -genkeypair -v \
+            -keystore "$RUNNER_TEMP/debug.keystore" \
+            -storepass android -alias androiddebugkey -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US" \
+            -keyalg RSA -keysize 2048 -validity 10000
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$RUNNER_TEMP/debug.keystore" >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey" >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android" >> "$GITHUB_ENV"
+
       - name: Validate project import
         run: godot --headless --editor --path GodotPrototype --quit
 
@@ -63,6 +74,9 @@ jobs:
           godot --headless --path GodotPrototype --export-debug "Android" ../release/DreamMMORPG-Android.apk
           test -s release/DreamMMORPG-Android.apk
           file release/DreamMMORPG-Android.apk
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose --print-certs release/DreamMMORPG-Android.apk
+          "$ANDROID_HOME/build-tools/34.0.0/zipalign" -c -v 4 release/DreamMMORPG-Android.apk
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging release/DreamMMORPG-Android.apk | head -n 5
 
       - name: Package source project
         run: |
