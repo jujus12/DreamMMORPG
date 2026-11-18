@@ -1,20 +1,32 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://Scripts/player_controller.gd" id="1_player"]
 [ext_resource type="Script" path="res://Scripts/training_dummy.gd" id="2_dummy"]
+[ext_resource type="Script" path="res://Scripts/mobile_hud.gd" id="3_hud"]
 
+[sub_resource type="PlaneMesh" id="Plane_ground_mesh"]
+size = Vector2(40, 40)
 [sub_resource type="BoxShape3D" id="BoxShape_ground"]
 size = Vector3(40, 0.5, 40)
-
-[sub_resource type="CapsuleShape3D" id="Capsule_player"]
+[sub_resource type="CapsuleMesh" id="Capsule_player_mesh"]
 radius = 0.45
 height = 1.9
+[sub_resource type="CapsuleShape3D" id="Capsule_player_shape"]
+radius = 0.45
+height = 1.9
+[sub_resource type="CylinderMesh" id="Cylinder_tree"]
+top_radius = 0.35
+bottom_radius = 0.55
+height = 3.0
+[sub_resource type="SphereMesh" id="Sphere_canopy"]
+radius = 2.0
+height = 4.0
 
 [node name="VillageSquare" type="Node3D"]
-
 [node name="Ground" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.25, 0)
 [node name="Mesh" type="MeshInstance3D" parent="Ground"]
-mesh = PlaneMesh.new()
+mesh = SubResource("Plane_ground_mesh")
 [node name="Collision" type="CollisionShape3D" parent="Ground"]
 shape = SubResource("BoxShape_ground")
 
@@ -22,14 +34,13 @@ shape = SubResource("BoxShape_ground")
 position = Vector3(0, 1, 4)
 script = ExtResource("1_player")
 [node name="Body" type="MeshInstance3D" parent="Player"]
-mesh = CapsuleMesh.new()
+mesh = SubResource("Capsule_player_mesh")
 [node name="Collision" type="CollisionShape3D" parent="Player"]
-shape = SubResource("Capsule_player")
-
-[node name="CameraRig" type="Node3D" parent="."]
+shape = SubResource("Capsule_player_shape")
+[node name="CameraRig" type="Node3D" parent="Player"]
 position = Vector3(0, 9, 10)
 rotation_degrees = Vector3(-38, 0, 0)
-[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+[node name="Camera3D" type="Camera3D" parent="Player/CameraRig"]
 current = true
 size = 14.0
 
@@ -37,14 +48,18 @@ size = 14.0
 position = Vector3(0, 0.8, -3)
 script = ExtResource("2_dummy")
 [node name="Mesh" type="MeshInstance3D" parent="TrainingDummy"]
-mesh = CapsuleMesh.new()
+mesh = SubResource("Capsule_player_mesh")
 [node name="Collision" type="CollisionShape3D" parent="TrainingDummy"]
-shape = SubResource("Capsule_player")
+shape = SubResource("Capsule_player_shape")
 
 [node name="AncientTree" type="Node3D" parent="."]
 position = Vector3(0, 0, -9)
 [node name="Trunk" type="MeshInstance3D" parent="AncientTree"]
-mesh = CylinderMesh.new()
+mesh = SubResource("Cylinder_tree")
 [node name="Canopy" type="MeshInstance3D" parent="AncientTree"]
 position = Vector3(0, 3, 0)
-mesh = SphereMesh.new()
+mesh = SubResource("Sphere_canopy")
+
+[node name="MobileHUD" type="CanvasLayer" parent="."]
+script = ExtResource("3_hud")
+player_path = NodePath("../Player")
