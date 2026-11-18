@@ -60,7 +60,7 @@ jobs:
       - name: Export Android APK
         run: |
           mkdir -p release
-          godot --headless --path GodotPrototype --export-debug "Android" release/DreamMMORPG-Android.apk
+          godot --headless --path GodotPrototype --export-debug "Android" ../release/DreamMMORPG-Android.apk
           test -s release/DreamMMORPG-Android.apk
           file release/DreamMMORPG-Android.apk
 
