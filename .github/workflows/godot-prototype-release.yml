@@ -18,26 +18,56 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
       - name: Install Godot
         uses: chickensoft-games/setup-godot@v1
         with:
           version: 4.4.1
           use-dotnet: false
 
+      - name: Install Godot export templates
+        run: |
+          mkdir -p "$HOME/.local/share/godot/export_templates/4.4.1.stable"
+          curl -L --fail --retry 3 \
+            "https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_export_templates.tpz" \
+            -o /tmp/godot_export_templates.tpz
+          unzip -o /tmp/godot_export_templates.tpz -d /tmp/godot_export_templates
+          cp -a /tmp/godot_export_templates/templates/. "$HOME/.local/share/godot/export_templates/4.4.1.stable/"
+
       - name: Validate project import
         run: godot --headless --editor --path GodotPrototype --quit
 
-      - name: Package source project
+      - name: Export Android APK
         run: |
           mkdir -p release
+          godot --headless --path GodotPrototype --export-debug "Android" release/DreamMMORPG-Android.apk
+          test -s release/DreamMMORPG-Android.apk
+          file release/DreamMMORPG-Android.apk
+
+      - name: Package source project
+        run: |
           zip -r release/DreamMMORPG-GodotPrototype.zip GodotPrototype \
             -x "GodotPrototype/.godot/*" "*/.DS_Store"
 
-      - name: Upload source package
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DreamMMORPG-GodotPrototype
-          path: release/DreamMMORPG-GodotPrototype.zip
+          name: DreamMMORPG-Android-build
+          path: |
+            release/DreamMMORPG-Android.apk
+            release/DreamMMORPG-GodotPrototype.zip
           if-no-files-found: error
 
       - name: Publish GitHub Release
@@ -47,8 +77,9 @@ jobs:
           tag_name: godot-prototype-v0.1.${{ github.run_number }}
           name: DreamMMORPG Godot Prototype v0.1.${{ github.run_number }}
           body: |
-            Early playable-prototype source package.
-            Includes the Godot project, touch movement, target selection,
-            Warlord starter combat logic and mobile HUD.
-            This release is source-only; no Android APK is included.
-          files: release/DreamMMORPG-GodotPrototype.zip
+            Early playable-prototype build.
+            Includes the Android APK and the Godot source project.
+            The APK is a prototype greybox build, not a complete MMORPG.
+          files: |
+            release/DreamMMORPG-Android.apk
+            release/DreamMMORPG-GodotPrototype.zip
