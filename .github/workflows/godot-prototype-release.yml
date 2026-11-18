@@ -44,6 +44,16 @@ jobs:
           unzip -o /tmp/godot_export_templates.tpz -d /tmp/godot_export_templates
           cp -a /tmp/godot_export_templates/templates/. "$HOME/.local/share/godot/export_templates/4.4.1.stable/"
 
+      - name: Configure Godot Android SDK paths
+        run: |
+          mkdir -p "$HOME/.config/godot"
+          cat > "$HOME/.config/godot/editor_settings-4.tres" <<EOF
+          [gd_resource type="EditorSettings" format=3]
+          [resource]
+          export/android/android_sdk_path = "/usr/local/lib/android/sdk"
+          export/android/java_sdk_path = "$JAVA_HOME"
+          EOF
+
       - name: Validate project import
         run: godot --headless --editor --path GodotPrototype --quit
 
